@@ -1,0 +1,95 @@
+plugins {
+    id 'java'
+    id 'java-library'
+    id "io.freefair.lombok" version "6.3.0"
+    id "com.github.johnrengelman.shadow" version "7.1.2"
+}
+
+group = 'com.volmit'
+version = '1.0.0'
+def main = 'com.volmit.adapt.Adapt'
+def apiVersion = '1.19'
+
+shadowJar {
+    append("plugin.yml")
+    relocate 'manifold', 'com.volmit.adapt.util.manifold'
+    relocate 'art.arcane', 'com.volmit.adapt.util.arcane'
+    relocate 'io.papermc.lib', 'com.volmit.adapt.util.paper'
+    relocate 'net.kyori', 'com.volmit.adapt.util.kyori'
+    relocate 'ChumBukkit.extensions', 'com.volmit.adapt.util.extensions'
+    relocate 'IrisBukkit.extensions', 'com.volmit.adapt.util.extensions'
+    relocate 'Fukkit.extensions', 'com.volmit.adapt.util.extensions'
+    relocate 'Amulet.extensions', 'com.volmit.adapt.util.extensions'
+    dependencies {
+        include(dependency('io.papermc:paperlib'))
+        include(dependency('net.kyori:'))
+        include(dependency('systems.manifold:'))
+        include(dependency('xyz.xenondevs:'))
+        include(dependency('art.arcane:'))
+    }
+}
+
+configurations.all {
+    resolutionStrategy.cacheChangingModulesFor 60, 'minutes'
+    resolutionStrategy.cacheDynamicVersionsFor 60, 'minutes'
+}
+
+if (JavaVersion.current().toString() != "17") {
+    System.err.println()
+    System.err.println("=========================================================================================================")
+    System.err.println("You must run gradle on Java 17. You are using " + JavaVersion.current())
+    System.err.println()
+    System.err.println("=== For IDEs ===")
+    System.err.println("1. Configure the project for Java 17")
+    System.err.println("2. Configure the bundled gradle to use Java 17 in settings")
+    System.err.println()
+    System.err.println("=== For Command Line (gradlew) ===")
+    System.err.println("1. Install JDK 17 from https://www.oracle.com/java/technologies/javase/jdk17-archive-downloads.html")
+    System.err.println("2. Set JAVA_HOME environment variable to the new jdk installation folder such as C:\\Program Files\\Java\\jdk-17.0.1")
+    System.err.println("3. Open a new command prompt window to get the new environment variables if need be.")
+    System.err.println("=========================================================================================================")
+    System.err.println()
+    System.exit(69)
+}
+
+file(jar.archiveFile.get().getAsFile().getParentFile().getParentFile().getParentFile().getAbsolutePath() + '/build/resources/main/plugin.yml').delete()
+
+processResources {
+    filesMatching('**/plugin.yml') {
+        expand(
+                'name': name.toString(),
+                'version': version.toString(),
+                'main': main.toString(),
+                'apiversion': apiVersion.toString()
+        )
+    }
+}
+
+repositories {
+    maven { url "https://arcanearts.jfrog.io/artifactory/archives" }
+    mavenCentral()
+}
+
+dependencies {
+    compileOnly 'org.projectlombok:lombok:1.18.24'
+    annotationProcessor 'org.projectlombok:lombok:1.18.24'
+    implementation "org.spigotmc:spigot-api:1.19.4-R0.1-SNAPSHOT"
+    implementation 'org.apache.commons:commons-lang3:3.12.0'
+    implementation 'com.google.code.gson:gson:2.9.0'
+    implementation 'org.zeroturnaround:zt-zip:1.15'
+    implementation 'org.bitbucket.mstrobel:procyon-core:0.6.0'
+    implementation 'org.bitbucket.mstrobel:procyon-compilertools:0.6.0'
+    implementation 'org.bitbucket.mstrobel:procyon-reflection:0.6.0'
+    implementation 'com.google.guava:guava:31.1-jre'
+    implementation 'com.googlecode.concurrentlinkedhashmap:concurrentlinkedhashmap-lru:1.4.2'
+    implementation 'org.apache-extras.beanshell:bsh:2.0b6'
+
+    // Shaded
+    implementation 'art.arcane:Curse:22.11.8'
+    implementation 'art.arcane:Source:23.3.9'
+    implementation 'art.arcane:Spatial:22.11.1'
+    implementation 'art.arcane:BitPack:22.11.1'
+    implementation 'art.arcane:MultiBurst:22.9.2'
+    implementation 'com.dfsek:Paralithic:0.4.0'
+}
+
