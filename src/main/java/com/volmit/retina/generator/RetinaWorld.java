@@ -3,35 +3,35 @@ package com.volmit.retina.generator;
 import art.arcane.curse.Curse;
 import art.arcane.multiburst.BurstExecutor;
 import art.arcane.multiburst.MultiBurst;
-import com.volmit.retina.generator.biome.RetinaBiome;
 import com.volmit.retina.generator.object.RetinaObject;
-import com.volmit.retina.generator.property.RetinaProperty;
+import com.volmit.retina.generator.tag.RetinaTag;
 import com.volmit.retina.noise.CompilableNoisePlane;
+import lombok.Data;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Data
 public class RetinaWorld {
     private final MultiBurst burst;
-    private List<RetinaProperty> properties;
-    private List<RetinaBiome> biomes;
+    private final Seeder seeder;
+    private final double scale;
+    private List<RetinaTag> properties;
     private List<RetinaObject> objects;
 
-    public RetinaWorld(long seed) {
-        Seeder s = new Seeder(seed);
+    public RetinaWorld(long seed, double scale) {
+        seeder = new Seeder(seed);
+        this.scale = scale;
         burst = new MultiBurst("Retina", Thread.MAX_PRIORITY);
         Class<?> t = getClass();
         String c = "com.volmit.retina.content.";
-        properties = Curse.implementedInPackage(t, RetinaProperty.class, c + "property")
-                .map(i -> (RetinaProperty)i.construct(s.next()).instance()).toList();
-        biomes = Curse.implementedInPackage(t, RetinaBiome.class, c + "biome")
-                .map(i -> (RetinaBiome)i.construct(s.next()).instance()).toList();
+        properties = Curse.implementedInPackage(t, RetinaTag.class, c + "property")
+                .map(i -> (RetinaTag)i.construct(seeder.next()).instance()).toList();
         objects = Curse.implementedInPackage(t, RetinaObject.class, c + "object")
-                .map(i -> (RetinaObject)i.construct(s.next()).instance()).toList();
+                .map(i -> (RetinaObject)i.construct(seeder.next()).instance()).toList();
 
         List<RetinaWorldObject> worldObjects = new ArrayList<>();
         worldObjects.addAll(properties);
-        worldObjects.addAll(biomes);
         worldObjects.addAll(objects);
         List<CompilableNoisePlane> noisePlanes = new ArrayList<>();
 

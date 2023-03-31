@@ -1,2 +1,2 @@
 # Retina
-A fast, more default friendly generator
+A fast, radically different, biomeless generator
