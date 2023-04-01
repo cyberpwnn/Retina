@@ -1,6 +1,5 @@
 package com.volmit.retina.content.mutators.surface;
 
-import com.volmit.retina.content.tags.TagEroded;
 import com.volmit.retina.content.tags.TagHumidity;
 import com.volmit.retina.content.tags.TagTemperature;
 import com.volmit.retina.generator.RetinaBiome;
@@ -9,9 +8,15 @@ import com.volmit.retina.generator.block.B;
 import com.volmit.retina.generator.block.BlockList;
 import com.volmit.retina.generator.mutator.RetinaBlockPaletteMutator;
 import com.volmit.retina.generator.mutator.RetinaHeightMutator;
+import com.volmit.retina.generator.tag.TagTarget;
 import org.bukkit.block.data.BlockData;
 
 public class AridMutator implements RetinaBlockPaletteMutator {
+    private static final TagTarget TARGET_ARID = new TagTarget()
+        .realValues()
+        .exponent(8)
+        .target(TagHumidity.class, 0)
+        .target(TagTemperature.class, 1);
     private static final BlockData SAND = B.block("sand");
     private static final BlockData SANDSTONE = B.block("sandstone");
 
@@ -27,10 +32,7 @@ public class AridMutator implements RetinaBlockPaletteMutator {
 
     @Override
     public double getWeight(RetinaBiome biome) {
-        double h = biome.get(TagHumidity.class)/2;
-        double t = biome.get(TagTemperature.class);
-        double v = Math.pow(t * (1 - h), 8);
-        return v * 100;
+        return TARGET_ARID.getWeight(biome);
     }
 
     @Override
