@@ -11,7 +11,7 @@ public class TagHumidity implements RetinaTag {
 
     public TagHumidity(RetinaWorld world) {
         this.noise = NoisePreset.PERLIN.create(world.getSeeder().next())
-            .octave(1, 1.25)
+            .scale(0.01)
             .fit(0, 1);
     }
 

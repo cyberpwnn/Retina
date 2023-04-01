@@ -1,5 +1,6 @@
 package com.volmit.retina.generator;
 
+import lombok.Getter;
 import org.bukkit.HeightMap;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -10,15 +11,32 @@ import org.bukkit.generator.WorldInfo;
 
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class RetinaChunkGenerator extends ChunkGenerator {
+    @Getter
+    private volatile RetinaWorld r;
+
     public RetinaChunkGenerator() {
         super();
+        r = null;
+    }
+
+    private RetinaWorld r(WorldInfo info) {
+        if(r == null) {
+            synchronized(this) {
+                if(r == null) {
+                    r = new RetinaWorld(info, 1);
+                }
+            }
+        } //
+
+        return r;
     }
 
     @Override
     public void generateNoise(WorldInfo worldInfo, Random random, int chunkX, int chunkZ, ChunkData chunkData) {
-
+        r(worldInfo).generateChunk(chunkX, chunkZ, chunkData);
     }
 
     @Override

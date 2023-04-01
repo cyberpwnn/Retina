@@ -15,3 +15,4 @@ public interface RetinaWorldObject {
                 .map(i -> (CompilableNoisePlane) i.get()).collect(Collectors.toList());
     }
 }
+

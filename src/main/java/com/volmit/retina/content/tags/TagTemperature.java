@@ -10,10 +10,10 @@ public class TagTemperature implements RetinaTag {
     private final NoisePlane noise;
 
     public TagTemperature(RetinaWorld world) {
-        this.noise = NoisePreset.PERLIN.create(world.getSeeder().next())
-            .octave(2, 1.8)
+        this.noise = NoisePreset.SIMPLEX.create(world.getSeeder().next())
+            .scale(0.01)
             .fit(0, 1);
-    }
+    }//
 
     @Override
     public String getKey() {

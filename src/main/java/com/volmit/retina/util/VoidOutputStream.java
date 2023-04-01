@@ -9,3 +9,4 @@ public class VoidOutputStream extends OutputStream {
         // poof
     }
 }
+

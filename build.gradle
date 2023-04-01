@@ -7,19 +7,20 @@ plugins {
 
 group = 'com.volmit'
 version = '1.0.0'
+def pname = "Retina"
 def main = 'com.volmit.adapt.Adapt'
 def apiVersion = '1.19'
 
 shadowJar {
     append("plugin.yml")
-    relocate 'manifold', 'com.volmit.adapt.util.manifold'
-    relocate 'art.arcane', 'com.volmit.adapt.util.arcane'
-    relocate 'io.papermc.lib', 'com.volmit.adapt.util.paper'
-    relocate 'net.kyori', 'com.volmit.adapt.util.kyori'
-    relocate 'ChumBukkit.extensions', 'com.volmit.adapt.util.extensions'
-    relocate 'IrisBukkit.extensions', 'com.volmit.adapt.util.extensions'
-    relocate 'Fukkit.extensions', 'com.volmit.adapt.util.extensions'
-    relocate 'Amulet.extensions', 'com.volmit.adapt.util.extensions'
+    relocate 'manifold', 'com.volmit.retina.util.manifold'
+    relocate 'art.arcane', 'com.volmit.retina.util.arcane'
+    relocate 'io.papermc.lib', 'com.volmit.retina.util.paper'
+    relocate 'net.kyori', 'com.volmit.retina.util.kyori'
+    relocate 'ChumBukkit.extensions', 'com.volmit.retina.util.extensions'
+    relocate 'IrisBukkit.extensions', 'com.volmit.retina.util.extensions'
+    relocate 'Fukkit.extensions', 'com.volmit.retina.util.extensions'
+    relocate 'Amulet.extensions', 'com.volmit.retina.util.extensions'
     dependencies {
         include(dependency('io.papermc:paperlib'))
         include(dependency('net.kyori:'))
@@ -57,7 +58,7 @@ file(jar.archiveFile.get().getAsFile().getParentFile().getParentFile().getParent
 processResources {
     filesMatching('**/plugin.yml') {
         expand(
-                'name': name.toString(),
+                'name': pname.toString(),
                 'version': version.toString(),
                 'main': main.toString(),
                 'apiversion': apiVersion.toString()
@@ -85,8 +86,8 @@ dependencies {
     implementation 'org.apache-extras.beanshell:bsh:2.0b6'
 
     // Shaded
-    implementation 'art.arcane:Curse:22.11.8'
-    implementation 'art.arcane:Source:23.3.9'
+    implementation 'art.arcane:Curse:23.4.3'
+    implementation 'art.arcane:Source:23.3.11'
     implementation 'art.arcane:Spatial:22.11.1'
     implementation 'art.arcane:BitPack:22.11.1'
     implementation 'art.arcane:MultiBurst:22.9.2'
