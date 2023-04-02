@@ -7,7 +7,6 @@ import com.volmit.retina.generator.RetinaWorld;
 import com.volmit.retina.generator.block.B;
 import com.volmit.retina.generator.block.BlockList;
 import com.volmit.retina.generator.mutator.RetinaBlockPaletteMutator;
-import com.volmit.retina.generator.mutator.RetinaHeightMutator;
 import com.volmit.retina.generator.tag.TagTarget;
 import org.bukkit.block.data.BlockData;
 

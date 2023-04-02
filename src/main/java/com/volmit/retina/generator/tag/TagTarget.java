@@ -19,9 +19,14 @@ public class TagTarget {
         exponent = 1;
     }
 
+    public double getWeightPercent(RetinaBiome biome) {
+        return getWeight(biome) / getTotalWeight();
+    }
+
     public double getWeight(RetinaBiome biome) {
         double v;
         double distance = 0;
+        double tw = getTotalWeight();
         RetinaTag tag;
 
         for(Class<? extends RetinaTag> i : targets.keySet()) {
@@ -31,10 +36,10 @@ public class TagTarget {
         }
 
         if(exponent != 1) {
-            return Math.pow(1D - distance, exponent);
+            return Math.pow(tw - distance, exponent);
         }
 
-        return 1D - distance;
+        return tw - distance;
     }
 
     public double getTotalWeight() {
@@ -59,6 +64,10 @@ public class TagTarget {
 
     public TagTarget target(Class<? extends RetinaTag> tag, double target) {
         return target(tag, target, 1);
+    }
+
+    public TagTarget targetExtremes(Class<? extends RetinaTag> tag, double weight) {
+        return target(tag, 1, weight).target(tag, 0, weight);
     }
 
     public TagTarget target(Class<? extends RetinaTag> tag, double target, double weight) {

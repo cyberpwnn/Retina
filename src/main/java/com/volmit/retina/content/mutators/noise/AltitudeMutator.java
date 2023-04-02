@@ -1,9 +1,6 @@
 package com.volmit.retina.content.mutators.noise;
 
-import art.arcane.source.NoisePlane;
-import art.arcane.source.util.NoisePreset;
 import com.volmit.retina.content.tags.TagAltitude;
-import com.volmit.retina.content.tags.TagTemperature;
 import com.volmit.retina.generator.RetinaBiome;
 import com.volmit.retina.generator.RetinaWorld;
 import com.volmit.retina.generator.mutator.RetinaHeightMutator;

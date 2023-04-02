@@ -5,19 +5,19 @@ import art.arcane.source.util.NoisePreset;
 import com.volmit.retina.generator.RetinaWorld;
 import com.volmit.retina.generator.tag.RetinaTag;
 
-public class TagHilly implements RetinaTag {
+public class TagAge implements RetinaTag {
     private final NoisePlane noise;
 
-    public TagHilly(RetinaWorld world) {
+    public TagAge(RetinaWorld world) {
         this.noise = NoisePreset.SIMPLEX.create(world.getSeeder().next())
             .fit(0, 1)
-            .exponent(2.5)
+            .exponent(1.35)
             .scale(0.02);
     }
 
     @Override
     public String getKey() {
-        return "hilly";
+        return "age";
     }
 
     @Override

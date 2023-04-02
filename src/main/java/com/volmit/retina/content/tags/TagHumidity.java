@@ -3,7 +3,6 @@ package com.volmit.retina.content.tags;
 import art.arcane.source.NoisePlane;
 import art.arcane.source.util.NoisePreset;
 import com.volmit.retina.generator.RetinaWorld;
-import com.volmit.retina.generator.Seeder;
 import com.volmit.retina.generator.tag.RetinaTag;
 
 public class TagHumidity implements RetinaTag {
@@ -11,6 +10,7 @@ public class TagHumidity implements RetinaTag {
 
     public TagHumidity(RetinaWorld world) {
         this.noise = NoisePreset.PERLIN.create(world.getSeeder().next())
+                .octave(3, 1.35)
             .scale(0.01)
             .fit(0, 1);
     }

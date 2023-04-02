@@ -1,6 +1,7 @@
 package com.volmit.retina.generator.tag;
 
 import art.arcane.source.interpolator.Interpolator;
+import com.volmit.retina.generator.RetinaBiome;
 import com.volmit.retina.generator.RetinaWorldObject;
 
 public interface RetinaTag extends RetinaWorldObject {

@@ -2,8 +2,7 @@ package com.volmit.retina.content.mutators.noise;
 
 import art.arcane.source.NoisePlane;
 import art.arcane.source.util.NoisePreset;
-import com.volmit.retina.content.tags.TagAltitude;
-import com.volmit.retina.content.tags.TagHilly;
+import com.volmit.retina.content.tags.TagAge;
 import com.volmit.retina.generator.RetinaBiome;
 import com.volmit.retina.generator.RetinaWorld;
 import com.volmit.retina.generator.mutator.RetinaHeightMutator;
@@ -30,6 +29,6 @@ public class HillMutator implements RetinaHeightMutator {
 
     @Override
     public double getWeight(RetinaBiome biome) {
-        return biome.get(TagHilly.class);
+        return biome.get(TagAge.class);
     }
 }
