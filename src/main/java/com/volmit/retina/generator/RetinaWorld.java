@@ -9,6 +9,7 @@ import com.volmit.retina.generator.block.B;
 import com.volmit.retina.generator.mutator.RetinaBlockPaletteMutator;
 import com.volmit.retina.generator.mutator.RetinaHeightMutator;
 import com.volmit.retina.generator.object.RetinaObject;
+import com.volmit.retina.generator.property.RetinaProperty;
 import com.volmit.retina.generator.tag.RetinaTag;
 import com.volmit.retina.noise.CompilableNoisePlane;
 import com.volmit.retina.util.RetinaRegistry;
@@ -25,6 +26,7 @@ import java.util.Map;
 
 @Data
 public class RetinaWorld {
+    public static RetinaWorld debugLast;
     private static final BlockData STONE = B.block("stone");
     private static final BlockData ERROR = B.block("lava");
     private final MultiBurst burst;
@@ -32,6 +34,7 @@ public class RetinaWorld {
     private final double scale;
     private RetinaRegistry<RetinaTag> tags;
     private RetinaRegistry<RetinaObject> objects;
+    private RetinaRegistry<RetinaProperty> properties;
     private RetinaRegistry<RetinaHeightMutator> heightMutators;
     private RetinaRegistry<RetinaBlockPaletteMutator> blockPaletteMutators;
     private NoisePlane noise;
@@ -40,12 +43,14 @@ public class RetinaWorld {
 
     public RetinaWorld(WorldInfo info, double scale) {
         this.worldInfo = info;
+        debugLast = this;
         long seed = info.getSeed();
         seeder = new Seeder(seed);
         this.scale = scale;
         burst = new MultiBurst("Retina", Thread.MAX_PRIORITY);
         tags = new RetinaRegistry<>(this, RetinaTag.class, "tags");
         objects = new RetinaRegistry<>(this, RetinaObject.class, "objects");
+        properties = new RetinaRegistry<>(this, RetinaProperty.class, "properties");
         heightMutators = new RetinaRegistry<>(this, RetinaHeightMutator.class, "mutators");
         blockPaletteMutators = new RetinaRegistry<>(this, RetinaBlockPaletteMutator.class, "mutators");
         white = NoisePreset.NATURAL.create(getSeeder().next()).scale(1.5);

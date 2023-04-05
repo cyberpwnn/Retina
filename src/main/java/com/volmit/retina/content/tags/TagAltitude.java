@@ -11,7 +11,10 @@ public class TagAltitude implements RetinaTag {
     public TagAltitude(RetinaWorld world) {
         this.noise = NoisePreset.NATURAL.create(world.getSeeder().next())
             .octave(4, 1.15)
-            .scale(0.002)
+            .scale(0.02)
+            .cachedMirror(1024)
+            .fit(0, 1)
+            .stretch(0.55, 0.8)
             .fit(0, 1);
     }
 

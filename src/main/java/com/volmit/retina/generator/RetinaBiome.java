@@ -5,6 +5,7 @@ import com.volmit.retina.generator.block.B;
 import com.volmit.retina.generator.block.BlockList;
 import com.volmit.retina.generator.mutator.RetinaBlockPaletteMutator;
 import com.volmit.retina.generator.mutator.RetinaHeightMutator;
+import com.volmit.retina.generator.property.RetinaProperty;
 import com.volmit.retina.generator.tag.RetinaTag;
 import lombok.Data;
 import org.bukkit.block.Block;
@@ -22,6 +23,7 @@ public class RetinaBiome {
     private final double noise;
     private final int height;
     private final double[] values;
+    private final double[] properties;
     private final double meter;
     private final List<BlockData> blockSpike;
     private static final BlockData DIRT = B.block("dirt");
@@ -35,7 +37,18 @@ public class RetinaBiome {
         this.noise = noise;
         this.height = calcHeight();
         this.meter = 1D / (double)(world.getWorldInfo().getMaxHeight() - world.getWorldInfo().getMinHeight());
+        this.properties = calcProperties();
         this.blockSpike = calcBlockSpike();
+    }
+
+    private double[] calcProperties() {
+        double[] properties = new double[world.getProperties().getValues().size()];
+
+        for(int i = 0; i < world.getProperties().getValues().size(); i++) {
+            properties[i] = world.getProperties().getValues().get(i).get(this);
+        }
+
+        return properties;
     }
 
     private List<BlockData> calcBlockSpike() {
@@ -104,6 +117,10 @@ public class RetinaBiome {
 
     public <T extends RetinaTag> T getTag(Class<? extends T> tag) {
         return world.getTags().get(tag);
+    }
+
+    public double getProperty(Class<? extends RetinaProperty> property) {
+        return properties[world.getProperties().getIndex(property)];
     }
 
     public double get(Class<? extends RetinaTag> tag) {

@@ -32,7 +32,7 @@ public class TagTarget {
         for(Class<? extends RetinaTag> i : targets.keySet()) {
             tag = biome.getTag(i);
             v = realValues ? biome.getReal(i) : biome.get(i);
-            distance *= (realValues ? Interpolator.rangeScale(0, 1, tag.minValue(), tag.maxValue(), v) : v) * weights.get(i);
+            distance += (realValues ? Interpolator.rangeScale(0, 1, tag.minValue(), tag.maxValue(), v) : v) * weights.get(i);
         }
 
         if(exponent != 1) {

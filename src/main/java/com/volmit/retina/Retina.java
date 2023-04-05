@@ -1,8 +1,10 @@
 package com.volmit.retina;
 
+import art.arcane.source.ui.Visualizer;
 import com.volmit.retina.generator.RetinaBiome;
 import com.volmit.retina.generator.RetinaChunkGenerator;
 import com.volmit.retina.generator.RetinaWorld;
+import com.volmit.retina.generator.property.RetinaProperty;
 import com.volmit.retina.generator.tag.RetinaTag;
 import com.volmit.retina.util.IO;
 import org.bukkit.Bukkit;
@@ -12,6 +14,9 @@ import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.WorldCreator;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
+import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.Player;
 import org.bukkit.generator.BiomeProvider;
 import org.bukkit.generator.ChunkGenerator;
@@ -61,13 +66,17 @@ public final class Retina extends JavaPlugin {
                        System.out.println("@debug t " + b.getWorld().getTags().getValues().size());
 
                        for(RetinaTag j : b.getWorld().getTags().getValues()) {
-                           System.out.println("@debug " + j.getKey() + " " + b.getReal(j.getClass()) + " (" + b.getReal(j.getClass()) + ")");
+                           System.out.println("@debug TAG_" + j.getKey() + " " + b.getReal(j.getClass()) + " (" + b.getReal(j.getClass()) + ")");
+                       }
+
+                       for(RetinaProperty j : b.getWorld().getProperties().getValues()) {
+                           System.out.println("@debug " + j.getKey() + " " + b.getProperty(j.getClass()));
                        }
 
                        System.out.println("@debug spike " + b.getBlockSpike());
                    }
                }
-           }, 0, 0);
+           }, 0, 20);
        });
     }
 
@@ -90,6 +99,40 @@ public final class Retina extends JavaPlugin {
 
         IO.delete(new File("r"));
         new File("r").deleteOnExit();
+    }
+
+    @Override
+    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+        if(command.getName().equalsIgnoreCase("retina")) {
+            try {
+                if(args.length == 2) {
+                    if(args[0].equalsIgnoreCase("tag") || args[0].equalsIgnoreCase("t")) {
+                        for(RetinaTag i : RetinaWorld.debugLast.getTags().getValues()) {
+                            if(i.getKey().equalsIgnoreCase(args[1])) {
+                                Visualizer.launch(i.toPlane());
+                                return true;
+                            }
+                        }
+                    }
+
+                    else if(args[0].equalsIgnoreCase("property") || args[0].equalsIgnoreCase("p")) {
+                        for(RetinaProperty i : RetinaWorld.debugLast.getProperties().getValues()) {
+                            if(i.getKey().equalsIgnoreCase(args[1])) {
+                                Visualizer.launch(i.toPlane(RetinaWorld.debugLast));
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
+
+            catch(Throwable e)
+            {
+                e.printStackTrace();
+            }
+        }
+
+        return false;
     }
 
     @Override

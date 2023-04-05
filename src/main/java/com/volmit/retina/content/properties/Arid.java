@@ -15,6 +15,7 @@ public class Arid extends TargetProperty {
                 .target(TagHumidity.class, 0, 0.6)
                 .target(TagAltitude.class, 0.3, 0.15)
                 .target(TagAge.class, 1, 0.05)
+            .exponent(10)
         );
     }
 }
