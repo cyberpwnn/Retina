@@ -87,7 +87,7 @@ dependencies {
 
     // Shaded
     implementation 'art.arcane:Curse:23.4.3'
-    implementation 'art.arcane:Source:23.3.11'
+    implementation 'art.arcane:Source:23.4.3'
     implementation 'art.arcane:Spatial:22.11.1'
     implementation 'art.arcane:BitPack:22.11.1'
     implementation 'art.arcane:MultiBurst:22.9.2'

@@ -9,7 +9,6 @@ import com.volmit.retina.generator.block.B;
 import com.volmit.retina.generator.mutator.RetinaBlockPaletteMutator;
 import com.volmit.retina.generator.mutator.RetinaHeightMutator;
 import com.volmit.retina.generator.object.RetinaObject;
-import com.volmit.retina.generator.property.RetinaProperty;
 import com.volmit.retina.generator.tag.RetinaTag;
 import com.volmit.retina.noise.CompilableNoisePlane;
 import com.volmit.retina.util.RetinaRegistry;
@@ -34,7 +33,6 @@ public class RetinaWorld {
     private final double scale;
     private RetinaRegistry<RetinaTag> tags;
     private RetinaRegistry<RetinaObject> objects;
-    private RetinaRegistry<RetinaProperty> properties;
     private RetinaRegistry<RetinaHeightMutator> heightMutators;
     private RetinaRegistry<RetinaBlockPaletteMutator> blockPaletteMutators;
     private NoisePlane noise;
@@ -50,10 +48,11 @@ public class RetinaWorld {
         burst = new MultiBurst("Retina", Thread.MAX_PRIORITY);
         tags = new RetinaRegistry<>(this, RetinaTag.class, "tags");
         objects = new RetinaRegistry<>(this, RetinaObject.class, "objects");
-        properties = new RetinaRegistry<>(this, RetinaProperty.class, "properties");
         heightMutators = new RetinaRegistry<>(this, RetinaHeightMutator.class, "mutators");
         blockPaletteMutators = new RetinaRegistry<>(this, RetinaBlockPaletteMutator.class, "mutators");
-        white = NoisePreset.NATURAL.create(getSeeder().next()).scale(1.5);
+        white = NoisePreset.NATURAL.create(getSeeder().next()).scale(0.07)
+            .warp(NoisePreset.WHITE.create(getSeeder().next()), 1, 16)
+        ;
         noise = new NoisePlane() {
             @Override
             public double noise(double v, double v1, double v2) {
@@ -83,14 +82,7 @@ public class RetinaWorld {
     }
 
     public RetinaBiome getBiome(int x, int z) {
-        List<RetinaTag> t = tags.getValues();
-        double[] values = new double[t.size()];
-
-        for(int i = 0; i < t.size(); i++) {
-            values[i] = t.get(i).get(x, z);
-        }
-
-        return new RetinaBiome(x, z, this, noise.noise(x, z), values);
+        return new RetinaBiome(x, z, this, noise.noise(x, z));
     }
 
     public void generateChunk(int cx, int cz, ChunkGenerator.ChunkData c) {

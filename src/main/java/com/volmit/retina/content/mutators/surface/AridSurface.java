@@ -1,43 +1,35 @@
 package com.volmit.retina.content.mutators.surface;
 
-import com.volmit.retina.content.properties.Arid;
-import com.volmit.retina.content.tags.TagHumidity;
-import com.volmit.retina.content.tags.TagTemperature;
+import com.volmit.retina.content.tags.Arid;
 import com.volmit.retina.generator.RetinaBiome;
 import com.volmit.retina.generator.RetinaWorld;
 import com.volmit.retina.generator.block.B;
 import com.volmit.retina.generator.block.BlockList;
+import com.volmit.retina.generator.block.WeightedBlock;
 import com.volmit.retina.generator.mutator.RetinaBlockPaletteMutator;
-import com.volmit.retina.generator.tag.TagTarget;
-import org.bukkit.block.data.BlockData;
 
-public class AridMutator implements RetinaBlockPaletteMutator {
-    private static final BlockData SAND = B.block("sand");
-    private static final BlockData SANDSTONE = B.block("sandstone");
+public class AridSurface implements RetinaBlockPaletteMutator {
+    private static final BlockList SAND = new BlockList(new WeightedBlock(B.block("sand"), 10));
+    private static final BlockList SANDSTONE = new BlockList(new WeightedBlock(B.block("sandstone"), 10));
 
-    public AridMutator(RetinaWorld world) {
+    public AridSurface(RetinaWorld world)
+    {
 
     }
 
     @Override
     public String getKey() {
-        return "arid-mutator";
-    }
-
-
-    @Override
-    public double getWeight(RetinaBiome biome) {
-        return biome.getProperty(Arid.class);
+        return "arid-surface";
     }
 
     @Override
     public BlockList generateSurface(RetinaBiome biome) {
-        return new BlockList(SAND);
+        return SAND;
     }
 
     @Override
     public BlockList generateDirt(RetinaBiome biome) {
-        return new BlockList(SANDSTONE);
+        return SANDSTONE;
     }
 
     @Override
@@ -48,5 +40,10 @@ public class AridMutator implements RetinaBlockPaletteMutator {
     @Override
     public double getSurfaceHeightMultiplier(RetinaBiome biome) {
         return 1;
+    }
+
+    @Override
+    public double getWeight(RetinaBiome biome) {
+        return biome.get(Arid.class);
     }
 }

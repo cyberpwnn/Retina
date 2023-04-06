@@ -5,7 +5,6 @@ import com.volmit.retina.generator.block.B;
 import com.volmit.retina.generator.block.BlockList;
 import com.volmit.retina.generator.mutator.RetinaBlockPaletteMutator;
 import com.volmit.retina.generator.mutator.RetinaHeightMutator;
-import com.volmit.retina.generator.property.RetinaProperty;
 import com.volmit.retina.generator.tag.RetinaTag;
 import lombok.Data;
 import org.bukkit.block.Block;
@@ -22,33 +21,21 @@ public class RetinaBiome {
     private final RetinaWorld world;
     private final double noise;
     private final int height;
-    private final double[] values;
-    private final double[] properties;
+    private final Double[] values;
     private final double meter;
     private final List<BlockData> blockSpike;
     private static final BlockData DIRT = B.block("dirt");
     private static final BlockData GRASS = B.block("grass_block");
 
-    public RetinaBiome(int x, int z, RetinaWorld world, double noise, double[] values) {
+    public RetinaBiome(int x, int z, RetinaWorld world, double noise) {
         this.x = x;
         this.z = z;
         this.world = world;
-        this.values = values;
         this.noise = noise;
+        this.values = new Double[world.getTags().getValues().size()];
         this.height = calcHeight();
         this.meter = 1D / (double)(world.getWorldInfo().getMaxHeight() - world.getWorldInfo().getMinHeight());
-        this.properties = calcProperties();
         this.blockSpike = calcBlockSpike();
-    }
-
-    private double[] calcProperties() {
-        double[] properties = new double[world.getProperties().getValues().size()];
-
-        for(int i = 0; i < world.getProperties().getValues().size(); i++) {
-            properties[i] = world.getProperties().getValues().get(i).get(this);
-        }
-
-        return properties;
     }
 
     private List<BlockData> calcBlockSpike() {
@@ -72,8 +59,6 @@ public class RetinaBiome {
         dh = Math.max(0, Math.min(dh, ((double) height /2) + 1));
         BlockList surface = new BlockList();
         BlockList dirt = new BlockList();
-        surface.add(GRASS, 1);
-        dirt.add(DIRT, 1);
 
         for(RetinaBlockPaletteMutator i : world.getBlockPaletteMutators().getValues()) {
             w = i.getWeight(this);
@@ -84,6 +69,16 @@ public class RetinaBiome {
 
             surface.add(i.generateSurface(this), w);
             dirt.add(i.generateDirt(this), w);
+        }
+
+        if(surface.getBlocks().isEmpty())
+        {
+            surface.add(GRASS, 1);
+        }
+
+        if(dirt.getBlocks().isEmpty())
+        {
+            dirt.add(DIRT, 1);
         }
 
         for(int i = 0; i < sh; i++) {
@@ -119,15 +114,15 @@ public class RetinaBiome {
         return world.getTags().get(tag);
     }
 
-    public double getProperty(Class<? extends RetinaProperty> property) {
-        return properties[world.getProperties().getIndex(property)];
-    }
-
     public double get(Class<? extends RetinaTag> tag) {
-        return values[world.getTags().getIndex(tag)];
-    }
+        int index = world.getTags().getIndex(tag);
 
-    public double getReal(Class<? extends RetinaTag> tag) {
-        return getTag(tag).real(get(tag));
+        if(values[index] != null)
+        {
+            return values[index];
+        }
+
+        values[index] = getTag(tag).get(this);
+        return values[index];
     }
 }

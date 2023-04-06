@@ -1,30 +1,16 @@
 package com.volmit.retina.generator.tag;
 
 import art.arcane.source.NoisePlane;
-import art.arcane.source.interpolator.Interpolator;
 import com.volmit.retina.generator.RetinaBiome;
+import com.volmit.retina.generator.RetinaWorld;
 import com.volmit.retina.generator.RetinaWorldObject;
 
 public interface RetinaTag extends RetinaWorldObject {
-    double get(int x, int z);
+    double get(RetinaBiome biome);
 
-    default double real(int x, int z) {
-        return real(get(x, z));
-    }
+    RetinaWorld getWorld();
 
-    double maxValue();
-
-    double minValue();
-
-    default double get(double realValue) {
-        return Interpolator.rangeScale(0, 1, minValue(), maxValue(), realValue);
-    }
-
-    default double real(double percent) {
-        return Interpolator.lerp(minValue(), maxValue(), percent);
-    }
-
-    default NoisePlane toPlane() {
+    default NoisePlane toPlane(RetinaWorld world) {
        return new NoisePlane() {
             @Override
             public double noise(double v, double v1, double v2) {
@@ -33,8 +19,16 @@ public interface RetinaTag extends RetinaWorldObject {
 
             @Override
             public double noise(double x, double z) {
-                return get((int)x, (int)z);
+                return get(world.getBiome((int)x, (int)z));
             }
+
+           public double getMaxOutput() {
+               return 1.0;
+           }
+
+           public double getMinOutput() {
+               return 0;
+           }
         };
     }
 }

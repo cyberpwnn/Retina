@@ -3,10 +3,6 @@ name: ${name}
 version: ${version}
 authors: [Cyberpwn, NextdoorPsycho]
 api-version: ${apiversion}
-commands:
-  retina:
-    aliases: [ret]
-    permission: OP
 libraries:
   - org.apache.commons:commons-lang3:3.12.0
   - com.google.code.gson:gson:2.8.9

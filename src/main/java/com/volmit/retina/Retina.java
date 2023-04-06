@@ -4,7 +4,6 @@ import art.arcane.source.ui.Visualizer;
 import com.volmit.retina.generator.RetinaBiome;
 import com.volmit.retina.generator.RetinaChunkGenerator;
 import com.volmit.retina.generator.RetinaWorld;
-import com.volmit.retina.generator.property.RetinaProperty;
 import com.volmit.retina.generator.tag.RetinaTag;
 import com.volmit.retina.util.IO;
 import org.bukkit.Bukkit;
@@ -18,8 +17,14 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.HandlerList;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerCommandPreprocessEvent;
+import org.bukkit.event.server.ServerCommandEvent;
 import org.bukkit.generator.BiomeProvider;
 import org.bukkit.generator.ChunkGenerator;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
@@ -29,7 +34,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
-public final class Retina extends JavaPlugin {
+public final class Retina extends JavaPlugin implements Listener {
     public static Retina instance;
     private World defWorld = null;
     public static File jarFile;
@@ -37,6 +42,7 @@ public final class Retina extends JavaPlugin {
     @Override
     public void onEnable() {
         jarFile = getFile();
+        getServer().getPluginManager().registerEvents(this, this);
 
         for(World i : Bukkit.getWorlds()) {
             if(i.getName().startsWith("r/")) {
@@ -66,11 +72,7 @@ public final class Retina extends JavaPlugin {
                        System.out.println("@debug t " + b.getWorld().getTags().getValues().size());
 
                        for(RetinaTag j : b.getWorld().getTags().getValues()) {
-                           System.out.println("@debug TAG_" + j.getKey() + " " + b.getReal(j.getClass()) + " (" + b.getReal(j.getClass()) + ")");
-                       }
-
-                       for(RetinaProperty j : b.getWorld().getProperties().getValues()) {
-                           System.out.println("@debug " + j.getKey() + " " + b.getProperty(j.getClass()));
+                           System.out.println("@debug " + j.getKey() + " " + b.get(j.getClass()));
                        }
 
                        System.out.println("@debug spike " + b.getBlockSpike());
@@ -82,6 +84,7 @@ public final class Retina extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        HandlerList.unregisterAll((Plugin) this);
         getServer().getScheduler().cancelTasks(this);
         for(World i : Bukkit.getWorlds()) {
             if(i.getName().startsWith("r/")) {
@@ -101,38 +104,28 @@ public final class Retina extends JavaPlugin {
         new File("r").deleteOnExit();
     }
 
-    @Override
-    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        if(command.getName().equalsIgnoreCase("retina")) {
-            try {
-                if(args.length == 2) {
-                    if(args[0].equalsIgnoreCase("tag") || args[0].equalsIgnoreCase("t")) {
-                        for(RetinaTag i : RetinaWorld.debugLast.getTags().getValues()) {
-                            if(i.getKey().equalsIgnoreCase(args[1])) {
-                                Visualizer.launch(i.toPlane());
-                                return true;
-                            }
-                        }
-                    }
+    @EventHandler
+    public void on(PlayerCommandPreprocessEvent e) {
+        if(!e.getPlayer().isOp())
+        {
+            return;
+        }
 
-                    else if(args[0].equalsIgnoreCase("property") || args[0].equalsIgnoreCase("p")) {
-                        for(RetinaProperty i : RetinaWorld.debugLast.getProperties().getValues()) {
-                            if(i.getKey().equalsIgnoreCase(args[1])) {
-                                Visualizer.launch(i.toPlane(RetinaWorld.debugLast));
-                                return true;
-                            }
-                        }
+        e.getMessage().toLowerCase().startsWith("/retina ");
+        String[] args = e.getMessage().split(" ");
+        args = Arrays.copyOfRange(args, 1, args.length);
+
+        e.setCancelled(true);
+        if(args.length == 2) {
+            if(args[0].equalsIgnoreCase("view") || args[0].equalsIgnoreCase("v")) {
+                for(RetinaTag i : RetinaWorld.debugLast.getTags().getValues()) {
+                    if(i.getKey().equalsIgnoreCase(args[1])) {
+                        Visualizer.launch(i.toPlane(RetinaWorld.debugLast));
+                        return;
                     }
                 }
             }
-
-            catch(Throwable e)
-            {
-                e.printStackTrace();
-            }
         }
-
-        return false;
     }
 
     @Override

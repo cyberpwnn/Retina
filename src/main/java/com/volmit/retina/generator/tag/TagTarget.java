@@ -1,45 +1,68 @@
 package com.volmit.retina.generator.tag;
 
-import art.arcane.source.interpolator.Interpolator;
 import com.volmit.retina.generator.RetinaBiome;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class TagTarget {
-    private boolean realValues;
+    private double totalWeight;
+    private double d1totalWeight;
     private double exponent;
+    private double min;
+    private double max;
     private final Map<Class<? extends RetinaTag>, Double> targets;
     private final Map<Class<? extends RetinaTag>, Double> weights;
 
     public TagTarget() {
-        realValues = false;
+        min = 0;
+        max = 1;
         targets = new HashMap<>();
         weights = new HashMap<>();
         exponent = 1;
     }
 
-    public double getWeightPercent(RetinaBiome biome) {
-        return getWeight(biome) / getTotalWeight();
+    public double get(RetinaBiome biome) {
+        double value = 0;
+
+        for(Map.Entry<Class<? extends RetinaTag>, Double> i : targets.entrySet()) {
+            value += (1D - Math.abs(i.getValue() - biome.get(i.getKey()))) * weights.getOrDefault(i.getKey(), 1D);
+        }
+
+        value = Math.pow(value * d1totalWeight, exponent);
+
+        if(value <= min) {
+            return 0;
+        }
+
+        if(value >= max) {
+            return 1;
+        }
+
+        return value;
     }
 
-    public double getWeight(RetinaBiome biome) {
-        double v;
-        double distance = 0;
-        double tw = getTotalWeight();
-        RetinaTag tag;
+    public TagTarget compile() {
+        totalWeight = getTotalWeight();
+        d1totalWeight = 1D / totalWeight;
+        return this;
+    }
 
-        for(Class<? extends RetinaTag> i : targets.keySet()) {
-            tag = biome.getTag(i);
-            v = realValues ? biome.getReal(i) : biome.get(i);
-            distance += (realValues ? Interpolator.rangeScale(0, 1, tag.minValue(), tag.maxValue(), v) : v) * weights.get(i);
-        }
+    public TagTarget min(double min) {
+        this.min = min;
+        return this;
+    }
 
-        if(exponent != 1) {
-            return Math.pow(tw - distance, exponent);
-        }
+    public TagTarget max(double max) {
+        this.max = max;
+        return this;
+    }
 
-        return tw - distance;
+    public TagTarget clip(double min, double max)
+    {
+        this.min = min;
+        this.max = max;
+        return this;
     }
 
     public double getTotalWeight() {
@@ -50,11 +73,6 @@ public class TagTarget {
         }
 
         return total;
-    }
-
-    public TagTarget realValues() {
-        this.realValues = true;
-        return this;
     }
 
     public TagTarget exponent(double exponent) {
